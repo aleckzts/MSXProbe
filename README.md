@@ -60,15 +60,62 @@ Depois da abertura, qualquer tecla leva à tela principal:
 - **↑/↓** escolhe outro teste (pode repetir um já feito).
 - **ESC** volta para a abertura (os resultados são mantidos).
 - **SLOTS** com ENTER abre o **mapa de slots**: cada slot/subslot × páginas
-  0000/4000/8000/C000 com o que há em cada uma (BIOS, BASIC, SUB-ROM, DISK,
-  MUSIC, ROM, RAM, PROBE, DATA, MIRR = espelho), CART A / CART B (slots 1 e 2,
-  pela convenção MSX) e os slots selecionados agora em cada página.
+  0000/4000/8000/C000 com o que há em cada uma, CART A / CART B e os slots
+  selecionados agora em cada página — veja a
+  [legenda do mapa de slots](#legenda-do-mapa-de-slots-slots).
 - **SCREEN** abre um submenu com os modos de tela que **aquele modelo** tem
   (MSX1: 0–3; MSX2: + 0/80 colunas e 4–8; MSX2+: + 10/11 e 12; modos 7, 8,
   10–12 só com 128KB de VRAM). Cada modo mostra a resolução e as cores
   máximas: texto com a fonte inteira e régua de colunas; bitmap com barras
   de cor, faixa de pixels alternados, grade de 256 cores (SCREEN 8) ou o plano
   de cores YJK (SCREEN 10–12).
+
+## Legenda do mapa de slots (SLOTS)
+
+```
+ SLOT  0000  4000  8000  C000  NOTE
+ 0     BIOS  BASIC DATA  ----
+ 1     MIRR  PROBE MIRR  DATA  CART A
+ 3-2   RAM   RAM   RAM   RAM
+ Pages now  0:0  1:1  2:3-2  3:3-2
+```
+
+**Colunas e notação**
+
+| Item | Significado |
+|---|---|
+| `SLOT` | Slot primário (`0`–`3`) ou, se o slot for expandido, `primário-subslot` (ex. `3-2`). |
+| `0000` `4000` `8000` `C000` | As 4 páginas de 16KB do espaço de endereços do Z80 (0000h–3FFFh, 4000h–7FFFh, 8000h–BFFFh, C000h–FFFFh). |
+| `NOTE` | Observação sobre o slot (ex. `CART A`). |
+| `Pages now` | Slot selecionado **neste momento** em cada página (`página:slot`). |
+
+**Siglas das células**
+
+| Sigla | Significado | Como é detectado |
+|---|---|---|
+| `BIOS` | BIOS principal do MSX (rotinas de sistema). | Slot indicado pela própria BIOS (`EXPTBL`), página 0000h. |
+| `BASIC` | Interpretador MSX-BASIC (segunda metade da ROM principal). | Mesmo slot da BIOS, página 4000h. |
+| `SUB` | SUB-ROM do MSX2/2+/turbo R (BASIC estendido, rotinas gráficas, paleta…). | Cabeçalho `"CD"` em 0000h. |
+| `DISK` | ROM de interface de disco (Disk BASIC / MSX-DOS, Nextor). | Slot listado em `DRVTBL` ou tabela de saltos do driver em 4010h. |
+| `MUSIC` | ROM do MSX-MUSIC (FM, YM2413): interno ou cartucho FM-PAC. | Texto `"OPLL"` em 401Ch. |
+| `ROM` | ROM com cabeçalho de cartucho (jogo, programa, ferramenta…). | Cabeçalho `"AB"` no início da página. |
+| `RAM` | Memória RAM (inclui Memory Mapper; o teste de RAM detalha). | Sonda não destrutiva: lê, escreve o complemento, confere e restaura. |
+| `PROBE` | O próprio MSX PROBE (este programa). | Slot de onde o programa está rodando. |
+| `MIRR` | **Espelho**: a mesma ROM da página 4000h aparecendo de novo em outra página (comum em cartuchos de 16KB, por decodificação parcial de endereços). | Primeiros 4 bytes iguais aos da página 4000h do mesmo slot. |
+| `DATA` | Há algo ali (não lê tudo `FFh`), mas não é RAM nem tem cabeçalho conhecido: ROM sem cabeçalho, bancos de MegaROM, Kanji, firmware… | Amostras de bytes diferentes de `FFh`. |
+| `----` | Vazio: nada respondendo naquela página. | Todas as amostras lidas como `FFh`. |
+
+**Notas e resumo do menu**
+
+| Sigla | Significado |
+|---|---|
+| `CART A` / `CART B` | Conectores de cartucho. Por **convenção** do MSX, slot primário 1 = cartucho A e slot 2 = cartucho B; não há como ler isso do hardware, e algumas máquinas fogem da regra. |
+| `EXP` | (linha SLOTS do menu) Slot primário **expandido**: tem subslots (`x-0` a `x-3`), detalhados no mapa. |
+| `-` | (linha SLOTS do menu) Nada encontrado naquele slot primário. |
+
+Na linha SLOTS do menu cada slot primário não expandido mostra o item mais
+relevante encontrado nele, nesta ordem: PROBE, BIOS, DISK, MUSIC, ROM, RAM,
+SUB, DATA.
 
 ## Compilar
 
