@@ -43,6 +43,19 @@ v_sev		ds 2		; next jingle event
 v_sfr		ds 1		; jingle frame
 ch_state	ds 9		; 3 channels x (volume, counter, rate)
 
+; SLOTS test
+v_quiet		ds 1		; 1 = boot run (no screens)
+v_cid		ds 1		; slot ID being classified
+v_cpage		ds 1		; page being classified
+v_base		ds 2		; page base address
+v_hasab		ds 1		; slot has an "AB" ROM: no write probes
+v_tmp2		ds 1
+v_and		ds 1
+v_hdr		ds 4		; header of page 1 (mirror check)
+v_mapp		ds 2		; pointer into v_map
+v_row		ds 1		; screen row
+v_map		ds 16 * 4	; slot index x page -> T_* (FFh = no slot)
+
 ; SCREEN test
 v_sn		ds 1		; modes available on this machine
 v_scur		ds 1		; cursor in the mode list

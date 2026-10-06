@@ -26,12 +26,17 @@
 - [x] Leitura de tecla espera soltar todas as teclas (evita tecla "fantasma")
 - [ ] **Validar em máquina real**
 
-## v0.3 — Slots e ROMs (tela de detalhes)
+## v0.3 — Slots e ROMs
 
-- [ ] Área/tela de detalhes para resultados maiores que uma linha
-- [ ] Mapa de slots/subslots × pages 0–3
-- [ ] Identificar BIOS, BASIC, SUB-ROM, Disk, MSX-MUSIC, cartuchos, RAM, vazio
-- [ ] Mostrar `DRVTBL` (interfaces de disco e nº de drives)
+- [x] KEYBOARD e JOYSTICK fora do menu (por enquanto)
+- [x] Mapa de slots/subslots × pages 0–3 (ENTER em SLOTS)
+- [x] Identificar BIOS, BASIC, SUB-ROM, Disk, MSX-MUSIC, cartuchos, RAM,
+      espelhos, vazio; CART A / CART B; slots ativos por página
+- [x] Resumo de SLOTS a partir do mapa (roda no boot)
+- [ ] Nº de drives por interface de disco (`DRVTBL`), nome do cartucho/ROM
+- [ ] Identificar mais ROMs: Kanji, MSX-DOS2/Nextor, firmware Panasonic/Sony,
+      FM-PAC × MSX-MUSIC interno, SCC
+- [ ] **Validar em máquina real**
 
 ## v0.4 — Memória
 
@@ -53,8 +58,8 @@
 
 ## v0.6 — Entrada, relógio e rede
 
-- [ ] KEYBOARD: matriz do teclado ao vivo (todas as teclas, inclusive SHIFT/CTRL/GRAPH/CODE)
-- [ ] JOYSTICK: portas 1 e 2 (direções + 2 botões), mouse/trackball (MSX2)
+- [ ] KEYBOARD (volta ao menu): matriz do teclado ao vivo (todas as teclas, inclusive SHIFT/CTRL/GRAPH/CODE)
+- [ ] JOYSTICK (volta ao menu): portas 1 e 2 (direções + 2 botões), mouse/trackball (MSX2)
 - [ ] RTC: relógio RP5C01 (MSX2 em diante): hora, bateria/SRAM
 - [ ] NETWORK: detectar interfaces (GR8NET, ObsoNET, ESP8266 via UNAPI…) — a pesquisar
 - [ ] SCREEN: sprites (modo 1 e 2), scroll horizontal (V9958), 192/212 linhas, entrelaçado

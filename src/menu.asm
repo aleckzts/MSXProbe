@@ -5,7 +5,7 @@
 ;  row  1  ----------------------------------------
 ;  rows 2-3  system info (sys_l1, sys_l2)
 ;  row  4  ----------------------------------------
-;  row  5    TEST      RESULT
+;  row  5    TEST     RESULT
 ;  rows 6+ > SLOTS     0:BIOS 1:PROBE ...  (one line per test)
 ;  row 22  ----------------------------------------
 ;  row 23  Up/Down:select ENTER:run ESC:intro
@@ -27,8 +27,8 @@ ST_NA	equ 4			; not available
 
 ROW_MENU equ 6
 COL_NAME equ 2
-COL_RES	 equ 12
-RES_LEN	 equ 27			; COL_RES + RES_LEN = 39: never touch column 40
+COL_RES	 equ 11
+RES_LEN	 equ 28			; COL_RES + RES_LEN = 39: never touch column 40
 RES_SIZE equ 32			; bytes per result buffer
 
 ; name, routine (0 = not available yet)
@@ -38,8 +38,6 @@ tests:
 	dw s_t_vram,	test_vram
 	dw s_t_sound,	test_sound
 	dw s_t_screen,	test_screen
-	dw s_t_keyb,	0
-	dw s_t_joy,	0
 	dw s_t_rtc,	0
 	dw s_t_net,	0
 NTESTS	equ ($ - tests) / 4
@@ -74,7 +72,12 @@ menu_reset:
 	jr c,.st
 	xor a
 	ld (v_cur),a
-	jp test_exec
+	inc a
+	ld (v_quiet),a		; boot run: no screens, results only
+	call test_exec
+	xor a
+	ld (v_quiet),a
+	ret
 
 ;------------------------------------------------------------------------------
 ; menu - main screen loop. Returns on ESC (back to the intro).

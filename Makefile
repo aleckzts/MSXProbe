@@ -5,6 +5,7 @@
 #   make run1/run2  roda como MSX1 / MSX2 (C-BIOS BR)
 #   make shot       roda MSX1/2/2+ navegando no menu, salva PNG/WAV em build/shots
 #   make shot-screen idem, passando por todos os modos do teste SCREEN
+#   make shot-slots  idem, abrindo o mapa de slots
 #   make release    copia a ROM para rom/ (versao publicada no git)
 #   make tools      (re)instala sjasmplus e openMSX
 #   make clean
@@ -13,6 +14,8 @@ SJASM   := tools/bin/sjasmplus
 OPENMSX := flatpak run org.openmsx.openMSX
 ROM     := build/msxprobe.rom
 SRC     := $(wildcard src/*.asm src/*/*.asm src/inc/*.inc)
+
+.DELETE_ON_ERROR:
 
 all: $(ROM)
 
@@ -41,6 +44,10 @@ shot-screen: $(ROM)
 	tools/shot.sh $(abspath $(ROM)) $(abspath build) shot_screens.tcl
 
 # Published ROM (committed to git for people who do not want to build)
+# SLOTS map on MSX1/2/2+
+shot-slots: $(ROM)
+	tools/shot.sh $(abspath $(ROM)) $(abspath build) shot_slots.tcl
+
 release: $(ROM)
 	@mkdir -p rom
 	cp $(ROM) rom/msxprobe.rom
@@ -52,4 +59,4 @@ tools:
 clean:
 	rm -rf build
 
-.PHONY: all run run1 run2 shot shot-screen release tools clean
+.PHONY: all run run1 run2 shot shot-screen shot-slots release tools clean

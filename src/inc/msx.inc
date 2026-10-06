@@ -49,6 +49,7 @@ MODE	equ 0FAFCh	; (MSX2) b1-2 VRAM size: 0=16K 1=64K 2=128K
 HIMEM	equ 0FC4Ah	; top of free RAM
 JIFFY	equ 0FC9Eh	; interrupt counter (word)
 CSRSW	equ 0FCA9h	; cursor display switch
+DRVTBL	equ 0FB21h	; disk interfaces: 4 x (drives, slot ID)
 EXPTBL	equ 0FCC1h	; [0]=BIOS slot ID, [1..3] b7=slot is expanded
 SLTTBL	equ 0FCC5h	; BIOS copy of the subslot registers
 

@@ -27,6 +27,11 @@ precisam ser validados em documentação ou máquina real antes de virar código
   usar pilha.
 - `ENASLT` (`0024h`) troca pages 1 e 2 com segurança.
 
+- **Conectores de cartucho:** por convenção, slot primário 1 = cartucho A
+  (superior/frontal) e slot 2 = cartucho B. Não há registro na BIOS que diga
+  quais slots são externos; algumas máquinas fogem da regra (anotar nos
+  relatórios de teste).
+
 ### Identificação de ROMs (heurísticas)
 
 | O quê | Como |
@@ -34,7 +39,8 @@ precisam ser validados em documentação ou máquina real antes de virar código
 | BIOS / BASIC | slot `EXPTBL[0]`, pages 0 / 1 |
 | SUB-ROM (MSX2+) | `"CD"` em `0000h`; slot em `EXBRSA` (`FAF8h`) |
 | Cartucho | `"AB"` em `4000h` ou `8000h` |
-| Disk ROM | slots listados em `DRVTBL` (`FB21h`); jump table de `4010h` (a confirmar) |
+| Disk ROM | slots listados em `DRVTBL` (`FB21h`); jump table `JP` em `4010h/4013h/4016h` (a confirmar em máquinas reais) |
+| Espelho | página 0/2 com os mesmos 4 primeiros bytes da página 1 do slot |
 | MSX-MUSIC | `"APRLOPLL"` (interno) ou `"PAC2OPLL"` (FM-PAC) em `4018h` |
 
 ## Memory Mapper

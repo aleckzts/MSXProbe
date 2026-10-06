@@ -16,8 +16,9 @@
 2. **Tela principal** (texto branco em fundo azul, 40 colunas): duas linhas com
    o que foi detectado no boot e o menu de testes.
 3. **SLOTS** já aparece preenchido (roda no boot, é instantâneo), ex.
-   `0:BIOS 1:PROBE 2:- 3:EXP`; o cursor começa em RAM.
-4. Testes ainda não implementados (RAM, KEYBOARD, JOYSTICK, RTC, NETWORK) já
+   `0:BIOS 1:PROBE 2:RAM 3:EXP`; o cursor começa em VRAM. Volte com ↑ até
+   SLOTS e aperte ENTER para ver o **mapa de slots** (qualquer tecla volta).
+4. Testes ainda não implementados (RAM, RTC, NETWORK) já
    aparecem como `Not available yet` e ENTER não faz nada neles.
 5. Aperte **ENTER** seguidas vezes:
    - **VRAM** → a tela apaga e a **borda muda de cor** a cada bloco de 16KB
@@ -48,7 +49,10 @@
 - SCREEN: a lista de modos bate com o modelo? Algum modo com imagem errada,
   tremendo ou faltando pedaço? Na 80 colunas, a régua chega a 80?
 - Alguma tela fechou sozinha, sem você apertar tecla?
-- SLOTS: confere com o que você sabe da máquina e dos cartuchos?
+- SLOTS: o mapa confere com o que você sabe da máquina e dos cartuchos?
+  CART A / CART B batem com os conectores físicos (slot 1 / slot 2)? A RAM
+  aparece onde deveria? Algum cartucho (principalmente MegaROM, interface de
+  disco ou MegaRAM) se comportou de forma estranha depois de abrir o mapa?
 - Depois do teste de VRAM, as cores da tela principal voltaram normais (MSX2/2+)?
 
 ## Modelo de relatório

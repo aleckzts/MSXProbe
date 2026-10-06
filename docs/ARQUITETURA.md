@@ -55,7 +55,7 @@
 
 - SCREEN 0, 40 colunas, impresso via BIOS (`POSIT`/`CHPUT`) — funciona em
   qualquer charset (japonês, internacional, brasileiro).
-- Tabela `tests`: `dw nome, rotina` por teste. Adicionar um teste = uma linha na
+- Tabela `tests`: `dw nome, rotina` por teste (rotina 0 = ainda não existe). Adicionar um teste = uma linha na
   tabela + um `src/tests/t_xxx.asm` + o nome em `src/lang/en.asm`.
 - **Contrato de um teste:** é chamado com o montador de strings (`out_str`,
   `out_dec`, `out_hex`, `out_slot`…) já apontando para o buffer de resultado
@@ -69,6 +69,26 @@
   descartadas.
 - Teste sem rotina (`dw nome, 0` na tabela) já nasce `ST_NA` com
   "Not available yet" e o ENTER é ignorado.
+
+## Teste SLOTS (src/tests/t_slots.asm)
+
+- Varre os 16 slots possíveis (primário×subslot) × 4 páginas e guarda o tipo
+  de cada célula em `v_map`. Roda no boot (só o resumo) e com ENTER (mapa).
+- Ordem por página: BIOS/BASIC (slot `EXPTBL[0]`), PROBE (nosso slot,
+  página 1), cabeçalho `"AB"` (DISK via `DRVTBL` ou jump table em
+  `4010h/4013h/4016h`, MUSIC via `"OPLL"` em `401Ch`, MIRR se o cabeçalho for
+  igual ao da página 4000h, senão ROM), SUB (`"CD"` em `0000h`), RAM, vazio
+  (amostras todas `FFh`) ou DATA.
+- **Sonda de RAM não destrutiva** em `página+0F00h`: lê, escreve o
+  complemento, relê e restaura (via `RDSLT`/`WRSLT`). Só é feita em slots sem
+  cabeçalho `"AB"` em 4000h/8000h — assim não trocamos banco de MegaROM nem
+  mexemos em interface de disco. O offset `0F00h` evita registradores comuns
+  de mapper (`5000h`, `6000h`…) e de FDC (`7FF8h`…).
+- Página 3 de um slot que não é o atual: `probe3`, rotina **sem pilha** que
+  troca a página 3 (e o subslot, se expandido), testa `CF00h` e volta. Nunca
+  toca `FFFFh` (registrador de subslot).
+- CART A / CART B: convenção (slots primários 1 e 2); não há como ler isso
+  do hardware.
 
 ## Teste SCREEN (src/tests/t_screen.asm)
 

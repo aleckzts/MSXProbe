@@ -26,8 +26,6 @@ s_t_vram:	db "VRAM", 0
 s_t_sound:	db "SOUND", 0
 s_t_screen:	db "SCREEN", 0
 s_t_slots:	db "SLOTS", 0
-s_t_keyb:	db "KEYBOARD", 0
-s_t_joy:	db "JOYSTICK", 0
 s_t_rtc:	db "RTC", 0		; real-time clock (MSX2 and later), not CPU speed
 s_t_net:	db "NETWORK", 0
 
@@ -89,12 +87,31 @@ s_nofm:		db ", no FM", 0
 s_modes:	db " modes, ", 0
 s_viewed:	db " viewed", 0
 
-; Slot labels for the SLOTS summary (max 5 chars)
-s_sl_bios:	db "BIOS", 0
+; SLOTS summary: expanded / nothing found
 s_sl_exp:	db "EXP", 0
-s_sl_probe:	db "PROBE", 0
-s_sl_cart:	db "CART", 0
 s_sl_none:	db "-", 0
+
+;--- Slot map (SCREEN 0, 40 columns) ---------------------------------------------
+s_map_title:	db "SLOT MAP", 0
+s_map_hdr:	db "SLOT  0000  4000  8000  C000  NOTE", 0
+s_carta:	db "CART A", 0
+s_cartb:	db "CART B", 0
+s_pages:	db "Pages now  ", 0
+s_anykey:	db "Press any key", 0
+s_map_legend:	db "MIRR = mirror of the 4000h page", 0
+; cell labels (max 5 chars), in T_* order (t_slots.asm)
+s_types:	dw .e, .ram, .bios, .basic, .sub, .disk, .music, .rom, .probe, .data, .mirr
+.e:	db "----", 0
+.ram:	db "RAM", 0
+.bios:	db "BIOS", 0
+.basic:	db "BASIC", 0
+.sub:	db "SUB", 0
+.disk:	db "DISK", 0
+.music:	db "MUSIC", 0
+.rom:	db "ROM", 0
+.probe:	db "PROBE", 0
+.data:	db "DATA", 0
+.mirr:	db "MIRR", 0
 
 ;--- SCREEN test: mode list (SCREEN 0, 40 columns; max 34 chars each) ------
 s_scr_title:	db "SCREEN MODES", 0

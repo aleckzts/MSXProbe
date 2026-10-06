@@ -14,9 +14,10 @@ Interface em **inglês** (textos isolados em `src/lang/en.asm`, prontos para
 tradução).
 
 > **Estado atual — v0.2:** abertura estilo Konami → tela principal com os
-> dados do boot e o menu de testes. Prontos: **SLOTS** (resumo, roda no boot),
-> **VRAM**, **SOUND** (PSG + MSX-MUSIC) e **SCREEN** (submenu com todos os
-> modos de tela do modelo). Os demais aparecem como "Not available yet".
+> dados do boot e o menu de testes. Prontos: **SLOTS** (resumo no boot + mapa
+> completo de slots/subslots), **VRAM**, **SOUND** (PSG + MSX-MUSIC) e
+> **SCREEN** (submenu com todos os modos de tela do modelo). RAM, RTC e
+> NETWORK aparecem como "Not available yet".
 > Veja o [roadmap](docs/ROADMAP.md).
 
 ## Baixar e usar (sem compilar)
@@ -42,12 +43,12 @@ Depois da abertura, qualquer tecla leva à tela principal:
  MSX2+  VDP V9958  VRAM 128KB  60Hz
  CPU Z80  Kbd JP  Chars JP
 ----------------------------------------
-   TEST      RESULT
-   SLOTS     0:BIOS 1:PROBE 2:- 3:EXP     <- já roda no boot
-   RAM       Not available yet            <- ENTER não faz nada
- > VRAM      -                            <- cursor no próximo teste
-   SOUND     -
-   SCREEN    -
+   TEST     RESULT
+   SLOTS    0:BIOS 1:PROBE 2:RAM 3:EXP    <- já roda no boot
+   RAM      Not available yet             <- ENTER não faz nada
+ > VRAM     -                             <- cursor no próximo teste
+   SOUND    -
+   SCREEN   -
    ...
 ----------------------------------------
  Up/Down:select ENTER:run ESC:intro
@@ -58,6 +59,10 @@ Depois da abertura, qualquer tecla leva à tela principal:
   apertando ENTER.
 - **↑/↓** escolhe outro teste (pode repetir um já feito).
 - **ESC** volta para a abertura (os resultados são mantidos).
+- **SLOTS** com ENTER abre o **mapa de slots**: cada slot/subslot × páginas
+  0000/4000/8000/C000 com o que há em cada uma (BIOS, BASIC, SUB-ROM, DISK,
+  MUSIC, ROM, RAM, PROBE, DATA, MIRR = espelho), CART A / CART B (slots 1 e 2,
+  pela convenção MSX) e os slots selecionados agora em cada página.
 - **SCREEN** abre um submenu com os modos de tela que **aquele modelo** tem
   (MSX1: 0–3; MSX2: + 0/80 colunas e 4–8; MSX2+: + 10/11 e 12; modos 7, 8,
   10–12 só com 128KB de VRAM). Cada modo mostra a resolução e as cores
@@ -89,6 +94,7 @@ sozinhos; screenshots e áudio em `build/shots/`):
 ```sh
 make shot          # abertura + menu, em MSX1/MSX2/MSX2+
 make shot-screen   # todos os modos do teste SCREEN
+make shot-slots    # mapa de slots
 pip install pillow # opcional, só para montar mosaicos das imagens
 ```
 

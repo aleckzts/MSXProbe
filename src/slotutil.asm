@@ -81,3 +81,33 @@ idx2id:
 	or e
 	or 80h			; carry clear
 	ret
+
+;------------------------------------------------------------------------------
+; slot_cmp4 - compare 4 bytes at HL in slot A with DE. Z = equal.
+; slot_cmp2 - same, 2 bytes.
+; RDSLT works for pages 0-2 and leaves interrupts disabled.
+slot_cmp2:
+	ld b,2
+	jr slot_cmp4.c
+slot_cmp4:
+	ld b,4
+.c:	push bc
+	push de
+	push af
+	call RDSLT
+	ld c,a
+	pop af
+	pop de
+	ex de,hl
+	ld b,a
+	ld a,c
+	cp (hl)
+	ld a,b
+	ex de,hl
+	pop bc
+	ret nz
+	inc hl
+	inc de
+	djnz .c
+	ret			; Z
+
