@@ -59,9 +59,9 @@ Depois da abertura, qualquer tecla leva à tela principal:
   apertando ENTER.
 - **↑/↓** escolhe outro teste (pode repetir um já feito).
 - **ESC** volta para a abertura (os resultados são mantidos).
-- **SLOTS** com ENTER abre o **mapa de slots**: cada slot/subslot × páginas
-  0000/4000/8000/C000 com o que há em cada uma, CART A / CART B e os slots
-  selecionados agora em cada página — veja a
+- **SLOTS** com ENTER abre o **mapa de slots** no formato do
+  [MSX Red Book](https://github.com/gseidler/The-MSX-Red-Book): a grade slot primário × subslot × página (fig. 44) e
+  os registradores de slot bit a bit (fig. 1 e 2) — veja a
   [legenda do mapa de slots](#legenda-do-mapa-de-slots-slots).
 - **SCREEN** abre um submenu com os modos de tela que **aquele modelo** tem
   (MSX1: 0–3; MSX2: + 0/80 colunas e 4–8; MSX2+: + 10/11 e 12; modos 7, 8,
@@ -72,38 +72,69 @@ Depois da abertura, qualquer tecla leva à tela principal:
 
 ## Legenda do mapa de slots (SLOTS)
 
+A tela segue a forma como o [MSX Red Book](https://github.com/gseidler/The-MSX-Red-Book) expõe os slots: a tabela
+`SLTATR` (fig. 44 — uma linha por slot primário, um bloco por subslot, quatro
+páginas em cada bloco) e os registradores de slot (fig. 1 — porta `A8H`;
+fig. 2 — `FFFFH` de cada slot expandido), bit 7 à esquerda = página 3.
+
 ```
- SLOT  0000  4000  8000  C000  NOTE
- 0     BIOS  BASIC DATA  ----
- 1     MIRR  PROBE MIRR  DATA  CART A
- 3-2   RAM   RAM   RAM   RAM
- Pages now  0:0  1:1  2:3-2  3:3-2
+ SLOT MAP                         MSX2
+----------------------------------------
+      SS0      SS1      SS2      SS3
+    0 4 8 C  0 4 8 C  0 4 8 C  0 4 8 C
+PS0 BIBADA..
+PS1 RARARARA
+PS2 ........ ........ MIPRMIDA ........
+PS3 SU...... ........ RARARARA ........
+----------------------------------------
+ BI BIOS   BA BASIC  SU SUB     DK DISK
+ MU MUSIC  RO ROM    RA RAM     PR PROBE
+ DA DATA   MI MIRROR .. EMPTY
+ PS1:CART A  PS2:CART B (convention)
+----------------------------------------
+ REGISTER 76543210 PAGE 3   2   1   0
+ PORT A8H 01011000      1   1   2   0
+ FFFFH(2) 00001000      0   0   2   0
+ FFFFH(3) 00000000      0   0   0   0
+ SLOT NOW               1   1   2-2 0
+
+ A8H=PSLOT#  FFFFH(n)=SSLOT# of PSn
 ```
 
-**Colunas e notação**
+(MSX2 com um expansor de slots no slot 2 e o MSX PROBE no subslot 2-2.)
+
+**Grade (Red Book fig. 44)**
 
 | Item | Significado |
 |---|---|
-| `SLOT` | Slot primário (`0`–`3`) ou, se o slot for expandido, `primário-subslot` (ex. `3-2`). |
-| `0000` `4000` `8000` `C000` | As 4 páginas de 16KB do espaço de endereços do Z80 (0000h–3FFFh, 4000h–7FFFh, 8000h–BFFFh, C000h–FFFFh). |
-| `NOTE` | Observação sobre o slot (ex. `CART A`). |
-| `Pages now` | Slot selecionado **neste momento** em cada página (`página:slot`). |
+| `PS0`–`PS3` | Slot primário (*Primary Slot*), uma linha cada. |
+| `SS0`–`SS3` | Subslot (*Secondary Slot*). Slot primário **não expandido** só tem o bloco `SS0`; os outros ficam em branco. |
+| `0 4 8 C` | As 4 páginas de 16KB de cada bloco: 0000h, 4000h, 8000h, C000h. |
+| 2 letras | O que há naquela página — siglas abaixo. |
+
+**Registradores (Red Book fig. 1 e 2)**
+
+| Linha | Significado |
+|---|---|
+| `PORT A8H` | *Primary Slot Register* (PPI porta A): 2 bits por página com o slot primário (`PSLOT#`). Valor em binário e o número por página. |
+| `FFFFH(n)` | *Secondary Slot Register* do slot primário `n` expandido (lido do hardware, já desinvertido): 2 bits por página com o subslot (`SSLOT#`). |
+| `SLOT NOW` | Slot selecionado **agora** em cada página, no formato `primário-subslot`. |
 
 **Siglas das células**
 
-| Sigla | Significado | Como é detectado |
-|---|---|---|
-| `BIOS` | BIOS principal do MSX (rotinas de sistema). | Slot indicado pela própria BIOS (`EXPTBL`), página 0000h. |
-| `BASIC` | Interpretador MSX-BASIC (segunda metade da ROM principal). | Mesmo slot da BIOS, página 4000h. |
-| `SUB` | SUB-ROM do MSX2/2+/turbo R (BASIC estendido, rotinas gráficas, paleta…). | Cabeçalho `"CD"` em 0000h. |
-| `DISK` | ROM de interface de disco (Disk BASIC / MSX-DOS, Nextor). | Slot listado em `DRVTBL` ou tabela de saltos do driver em 4010h. |
-| `MUSIC` | ROM do MSX-MUSIC (FM, YM2413): interno ou cartucho FM-PAC. | Texto `"OPLL"` em 401Ch. |
-| `ROM` | ROM com cabeçalho de cartucho (jogo, programa, ferramenta…). | Cabeçalho `"AB"` no início da página. |
-| `RAM` | Memória RAM (inclui Memory Mapper; o teste de RAM detalha). | Sonda não destrutiva: lê, escreve o complemento, confere e restaura. |
-| `PROBE` | O próprio MSX PROBE (este programa). | Slot de onde o programa está rodando. |
-| `MIRR` | **Espelho**: a mesma ROM da página 4000h aparecendo de novo em outra página (comum em cartuchos de 16KB, por decodificação parcial de endereços). | Primeiros 4 bytes iguais aos da página 4000h do mesmo slot. |
-| `DATA` | Há algo ali (não lê tudo `FFh`), mas não é RAM nem tem cabeçalho conhecido: ROM sem cabeçalho, bancos de MegaROM, Kanji, firmware… | Amostras de bytes diferentes de `FFh`. |
-| `----` | Vazio: nada respondendo naquela página. | Todas as amostras lidas como `FFh`. |
+| Código | Nome | Significado | Como é detectado |
+|---|---|---|---|
+| `BI` | BIOS | BIOS principal do MSX (rotinas de sistema). | Slot indicado pela própria BIOS (`EXPTBL`), página 0000h. |
+| `BA` | BASIC | Interpretador MSX-BASIC (segunda metade da ROM principal). | Mesmo slot da BIOS, página 4000h. |
+| `SU` | SUB | SUB-ROM do MSX2/2+/turbo R (BASIC estendido, rotinas gráficas, paleta…). | Cabeçalho `"CD"` em 0000h. |
+| `DK` | DISK | ROM de interface de disco (Disk BASIC / MSX-DOS, Nextor). | Slot listado em `DRVTBL` ou tabela de saltos do driver em 4010h. |
+| `MU` | MUSIC | ROM do MSX-MUSIC (FM, YM2413): interno ou cartucho FM-PAC. | Texto `"OPLL"` em 401Ch. |
+| `RO` | ROM | ROM com cabeçalho de cartucho (jogo, programa, ferramenta…). | Cabeçalho `"AB"` no início da página. |
+| `RA` | RAM | Memória RAM (inclui Memory Mapper; o teste de RAM detalha). | Sonda não destrutiva: lê, escreve o complemento, confere e restaura. |
+| `PR` | PROBE | O próprio MSX PROBE (este programa). | Slot de onde o programa está rodando. |
+| `MI` | MIRR | **Espelho**: a mesma ROM da página 4000h aparecendo de novo em outra página (comum em cartuchos de 16KB, por decodificação parcial de endereços). | Primeiros 4 bytes iguais aos da página 4000h do mesmo slot. |
+| `DA` | DATA | Há algo ali (não lê tudo `FFh`), mas não é RAM nem tem cabeçalho conhecido: ROM sem cabeçalho, bancos de MegaROM, Kanji, firmware… | Amostras de bytes diferentes de `FFh`. |
+| `..` | vazio | Vazio: nada respondendo naquela página. | Todas as amostras lidas como `FFh`. |
 
 **Notas e resumo do menu**
 
@@ -210,3 +241,11 @@ docs/                documentação técnica e de testes
 - [docs/HARDWARE.md](docs/HARDWARE.md) — referência de slots, BIOS, mappers, MegaRAM, VDP e chips de som
 - [docs/ROADMAP.md](docs/ROADMAP.md) — o que vem a seguir
 - [docs/TESTE_MAQUINA_REAL.md](docs/TESTE_MAQUINA_REAL.md) — procedimento e relatório de testes
+
+## Referências
+
+- **The MSX Red Book** (Avalon Software, Kuma Computers, 1985) — referência
+  quase completa do MSX1: PPI e registradores de slot (cap. 1), BIOS e as
+  rotinas de troca de slot `RDSLT`/`WRSLT`/`ENASLT` (cap. 4), `SLTATR` e a
+  área de trabalho (cap. 6). Versão em Markdown:
+  <https://github.com/gseidler/The-MSX-Red-Book>. O mapa de slots segue as figuras 1, 2 e 44 do livro.

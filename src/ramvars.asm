@@ -47,11 +47,14 @@ ch_state	ds 9		; 3 channels x (volume, counter, rate)
 v_quiet		ds 1		; 1 = boot run (no screens)
 v_cid		ds 1		; slot ID being classified
 v_cpage		ds 1		; page being classified
-v_base		ds 2		; page base address
 v_hasab		ds 1		; slot has an "AB" ROM: no write probes
 v_tmp2		ds 1
-v_and		ds 1
-v_hdr		ds 4		; header of page 1 (mirror check)
+v_snp		ds 2		; snapshot of the page being classified
+v_sid		ds 1		; snap: slot ID
+v_spg		ds 1		; snap: page
+v_stest		ds 1		; snap: 1 = RAM probe too
+v_sbuf		ds 2		; snap: buffer
+v_osec		ds 1		; snap: subslot register to restore
 v_mapp		ds 2		; pointer into v_map
 v_row		ds 1		; screen row
 v_map		ds 16 * 4	; slot index x page -> T_* (FFh = no slot)

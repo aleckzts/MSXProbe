@@ -33,6 +33,10 @@
 - [x] Identificar BIOS, BASIC, SUB-ROM, Disk, MSX-MUSIC, cartuchos, RAM,
       espelhos, vazio; CART A / CART B; slots ativos por página
 - [x] Resumo de SLOTS a partir do mapa (roda no boot)
+- [x] Mapa no formato do MSX Red Book (fig. 44: PS × SS × página) e
+      registradores A8h / FFFFh bit a bit (fig. 1 e 2)
+- [x] Scan mais rápido: troca de slot uma vez por página (em vez de
+      `RDSLT` por byte)
 - [ ] Nº de drives por interface de disco (`DRVTBL`), nome do cartucho/ROM
 - [ ] Identificar mais ROMs: Kanji, MSX-DOS2/Nextor, firmware Panasonic/Sony,
       FM-PAC × MSX-MUSIC interno, SCC

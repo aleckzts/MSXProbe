@@ -15,6 +15,9 @@ precisam ser validados em documentação ou máquina real antes de virar código
 
 ## Slots
 
+Referência principal: [The MSX Red Book](https://github.com/gseidler/The-MSX-Red-Book), cap. 1 ("PPI Port A",
+"Expanders") e cap. 4 (`RDSLT`, `027EH`, `02A3H`, `CHKRAM`).
+
 - Porta `A8h` (PPI A): 2 bits por página com o slot primário
   (b0–1 page 0 … b6–7 page 3).
 - Slot expandido: registrador de subslot em `FFFFh` daquele slot primário
@@ -26,6 +29,15 @@ precisam ser validados em documentação ou máquina real antes de virar código
   e funcionam para pages 0–2. Page 3 de outro slot exige rotina própria sem
   usar pilha.
 - `ENASLT` (`0024h`) troca pages 1 e 2 com segurança.
+- Custo do `RDSLT` (Red Book): por byte, calcula máscaras (`027EH`: OR/AND
+  para A8h, slot replicado, máscara da página), troca o subslot (`02A3H`:
+  página 3 → slot primário, lê `FFFFh` invertido, mistura, escreve, volta),
+  troca o primário via `RDPRIM` (`F380h`) e desfaz o subslot. Para ler
+  muitos bytes da mesma página vale trocar uma vez e ler direto (ver
+  `snap` em `t_slots.asm`).
+- No boot (`CHKRAM`) a BIOS procura RAM nas pages 2 e 3 dos 16 slots e
+  detecta expansores escrevendo em `FFFFh` (o registrador de subslot lê de
+  volta **invertido**); o resultado vai para `EXPTBL`/`SLTTBL`.
 
 - **Conectores de cartucho:** por convenção, slot primário 1 = cartucho A
   (superior/frontal) e slot 2 = cartucho B. Não há registro na BIOS que diga

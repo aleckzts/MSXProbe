@@ -72,6 +72,9 @@
 
 ## Teste SLOTS (src/tests/t_slots.asm)
 
+Referência: [The MSX Red Book](https://github.com/gseidler/The-MSX-Red-Book) — cap. 1 (porta A8h, expansores),
+cap. 4 (`RDSLT`, `027EH`, `02A3H`), cap. 5/6 (`SLTATR`, fig. 44).
+
 - Varre os 16 slots possíveis (primário×subslot) × 4 páginas e guarda o tipo
   de cada célula em `v_map`. Roda no boot (só o resumo) e com ENTER (mapa).
 - Ordem por página: BIOS/BASIC (slot `EXPTBL[0]`), PROBE (nosso slot,
@@ -79,14 +82,34 @@
   `4010h/4013h/4016h`, MUSIC via `"OPLL"` em `401Ch`, MIRR se o cabeçalho for
   igual ao da página 4000h, senão ROM), SUB (`"CD"` em `0000h`), RAM, vazio
   (amostras todas `FFh`) ou DATA.
+- **Leitura por "foto" da página (`snap`)**. O Red Book mostra que `RDSLT`,
+  a cada byte, calcula as máscaras (`027EH`), troca o registrador de subslot
+  (`02A3H`) e o slot primário (`RDPRIM`, em RAM) e desfaz tudo. Aqui cada
+  página é trocada **uma vez**: `sec_set` acerta o subslot (com a página 3
+  no slot primário, só registradores), e `ramrd` — um "RDPRIM de bloco"
+  copiado para a RAM — troca a porta A8h, copia o cabeçalho (32 bytes) e as
+  amostras em `0F00h/2000h/3FFFh`, faz a sonda de RAM se pedida e volta.
+  Se o slot já está selecionado na página, lê no lugar, sem trocar nada.
+  As fotos das páginas 0–2 ficam em `linebuf` (só o teste SCREEN usa).
+- Único caso que ainda usa `RDSLT`/`WRSLT` (`snap_bios`, lendo só os 14
+  bytes usados): página 1 de **outro subslot do nosso slot primário** (ex.:
+  MSX PROBE num subslot de um MegaFlashROM/expansor) — trocar o subslot da
+  página 1 tiraria o próprio programa do ar; a BIOS faz isso rodando da
+  página 0.
+- Tempo do scan (openMSX, emulado): MSX1 20→15 ms, MSX2+ 52→28 ms, MSX2 com
+  expansor 91→62 ms, MSX2+ com a ROM dentro de um expansor 85→61 ms.
 - **Sonda de RAM não destrutiva** em `página+0F00h`: lê, escreve o
-  complemento, relê e restaura (via `RDSLT`/`WRSLT`). Só é feita em slots sem
-  cabeçalho `"AB"` em 4000h/8000h — assim não trocamos banco de MegaROM nem
-  mexemos em interface de disco. O offset `0F00h` evita registradores comuns
-  de mapper (`5000h`, `6000h`…) e de FDC (`7FF8h`…).
+  complemento, relê e restaura. Só é feita em slots sem cabeçalho `"AB"` em
+  4000h/8000h — assim não trocamos banco de MegaROM nem mexemos em interface
+  de disco. O offset `0F00h` evita registradores comuns de mapper (`5000h`,
+  `6000h`…) e de FDC (`7FF8h`…).
 - Página 3 de um slot que não é o atual: `probe3`, rotina **sem pilha** que
   troca a página 3 (e o subslot, se expandido), testa `CF00h` e volta. Nunca
   toca `FFFFh` (registrador de subslot).
+- Tela no formato do Red Book: grade PS×SS×página (fig. 44, códigos de 2
+  letras em `s_codes`) e os registradores A8h e `FFFFh` de cada slot
+  expandido bit a bit (fig. 1 e 2). `FFFFh` é lido do hardware (`sec_get`),
+  não da cópia `SLTTBL`.
 - CART A / CART B: convenção (slots primários 1 e 2); não há como ler isso
   do hardware.
 

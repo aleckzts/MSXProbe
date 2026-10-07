@@ -92,14 +92,25 @@ s_sl_exp:	db "EXP", 0
 s_sl_none:	db "-", 0
 
 ;--- Slot map (SCREEN 0, 40 columns) ---------------------------------------------
+; Laid out like the MSX Red Book: fig.44 (PS x SS x page) and fig.1/fig.2
+; (slot registers). Column positions are fixed: keep the spacing.
 s_map_title:	db "SLOT MAP", 0
-s_map_hdr:	db "SLOT  0000  4000  8000  C000  NOTE", 0
-s_carta:	db "CART A", 0
-s_cartb:	db "CART B", 0
-s_pages:	db "Pages now  ", 0
+s_map_ss:	db "      SS0      SS1      SS2      SS3", 0
+s_map_pg:	db "    0 4 8 C  0 4 8 C  0 4 8 C  0 4 8 C", 0
+s_map_ps:	db "PS", 0
+s_map_legend:	db " BI BIOS   BA BASIC  SU SUB     DK DISK", 0	; 4 lines
+		db " MU MUSIC  RO ROM    RA RAM     PR PROBE", 0
+		db " DA DATA   MI MIRROR .. EMPTY", 0
+		db " PS1:CART A  PS2:CART B (convention)", 0
+s_reg_hdr:	db " REGISTER 76543210 PAGE 3   2   1   0", 0
+s_reg_a8:	db " PORT A8H", 0
+s_reg_ss:	db " FFFFH(", 0			; + primary slot + ")"
+s_reg_now:	db " SLOT NOW", 0
+s_reg_note:	db " A8H=PSLOT#  FFFFH(n)=SSLOT# of PSn", 0
 s_anykey:	db "Press any key", 0
-s_map_legend:	db "MIRR = mirror of the 4000h page", 0
-; cell labels (max 5 chars), in T_* order (t_slots.asm)
+; 2-letter cell codes of the map, in T_* order (t_slots.asm)
+s_codes:	db "..RABIBASUDKMUROPRDAMI"
+; type names (menu summary, max 5 chars), in T_* order (t_slots.asm)
 s_types:	dw .e, .ram, .bios, .basic, .sub, .disk, .music, .rom, .probe, .data, .mirr
 .e:	db "----", 0
 .ram:	db "RAM", 0
